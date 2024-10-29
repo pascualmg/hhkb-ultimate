@@ -41,8 +41,11 @@ util/qmk_install.sh  # For Linux/macOS users
 #+END_SRC
 
 * Installation Steps
+<<<<<<< HEAD
 ** pro-tip
 This file is an .org!! if you use emacs you can tangle the code and use it directly in your qmk_firmware folder and use literate programming to document your keymap.
+=======
+>>>>>>> origin/main
 
 ** 1. Prepare Your Directory
 Create a dedicated space for your custom keymap:
@@ -330,7 +333,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  ,*
  ,* Version: 1.0
  ,* Author: Pascual Muñoz Galián
- ,* Source: https://github.com/[your-repo]/hhkb-keymap
+ ,* Source: https://github.com/pascualmg/hhkb-ultimate
  ,*
  ,* This keymap is shared with the community in the spirit of
  ,* open source and the HHKB philosophy. Feel free to modify
@@ -338,4 +341,3 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  ,*/
 
 #+end_src
-
