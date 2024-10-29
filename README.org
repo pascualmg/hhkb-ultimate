@@ -41,6 +41,8 @@ util/qmk_install.sh  # For Linux/macOS users
 #+END_SRC
 
 * Installation Steps
+** pro-tip
+This file is an .org!! if you use emacs you can tangle the code and use it directly in your qmk_firmware folder and use literate programming to document your keymap.
 
 ** 1. Prepare Your Directory
 Create a dedicated space for your custom keymap:
