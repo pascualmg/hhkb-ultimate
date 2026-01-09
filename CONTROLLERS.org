@@ -1,0 +1,148 @@
+#+TITLE: HHKB Controllers - Guía Completa
+#+AUTHOR: pascualmg
+#+DATE: 2025-01-10
+
+* Filosofía HHKB
+
+#+BEGIN_QUOTE
+"El teclado es inteligente. Lo conectas a lo que sea y funciona.
+Sin drivers, sin software, sin mierdas."
+— Filosofía Hasu/Wada
+#+END_QUOTE
+
+La gracia de un controller programable es que el firmware vive en el teclado, no en el ordenador. Lo conectas a cualquier dispositivo (PC, Mac, móvil, Raspberry) y funciona exactamente igual.
+
+* Controllers Disponibles
+
+** Hasu Controller (Original)
+
+El primer controller alternativo para HHKB, diseñado por Hasu.
+
+| Característica | Detalle |
+|----------------+----------------------------------------|
+| Compatibilidad | HHKB Pro, Pro 2 (ANSI/JIS) |
+| *NO compatible* | HHKB Classic, *Hybrid* |
+| Firmware | TMK (nativo), QMK (portado) |
+| Bluetooth | Sí (módulo RN-42) |
+| USB Hub | No |
+| Precio | ~$90 USD |
+| Dónde comprar | [[https://1upkeyboards.com/shop/controllers/hhkb-bluetooth-controller/][1upkeyboards]] |
+
+*** Problema conocido: QMK + Bluetooth
+
+QMK tiene soporte deficiente para el módulo RN-42:
+- Conecta pero no envía teclas
+- Uso de memoria ~96%
+- Bugs conocidos sin resolver
+
+*Solución*: Usar TMK en lugar de QMK para Bluetooth.
+
+*** Firmware recomendado
+
+| Uso | Firmware | Motivo |
+|-----+----------+-------------------------------------|
+| USB only | QMK | Más features, mejor documentación |
+| Bluetooth | TMK | Soporte nativo RN-42, estable |
+
+** Cipulot EC Pro-X
+
+PCB de reemplazo completa (no solo controller).
+
+| Característica | Detalle |
+|----------------+-------------------------------------------------|
+| Compatibilidad | HHKB Pro 2, Classic, *Hybrid* |
+| Firmware | QMK, VIA, Vial |
+| Bluetooth | *No* (solo USB) |
+| USB | USB-C |
+| Features extra | Rapid trigger, calibración, RGB opcional |
+| Precio | ~$80-100 USD |
+| Dónde comprar | [[https://cannonkeys.com/products/cipulot-ec-pcbs-and-daughterboards][CannonKeys]] |
+
+*** Componentes necesarios
+
+Para HHKB Pro 2:
+- EC Pro-X PCB
+- EC Pro-2 Hub Daughterboard
+
+Para HHKB Hybrid/Classic:
+- EC Pro-X PCB
+- EC Pro-3 Slim Daughterboard
+
+*** Importante
+
+- Reemplaza TODO el PCB original, no solo el controller
+- Pierdes el Bluetooth nativo del Hybrid
+- Requiere abrir el teclado y hacer swap completo
+
+** SHKB (4pplet)
+
+| Característica | Detalle |
+|----------------+----------------------------------------|
+| Compatibilidad | HHKB Pro 2 |
+| *NO compatible* | Classic, Hybrid |
+| Firmware | QMK, TMK, VIA |
+| Bluetooth | No |
+| USB Hub | Sí (2x USB 2.0, o 3x USB 3.0 con riser) |
+| Precio | ~$70 USD |
+| Dónde comprar | [[https://4pplet.com/products/steezyhackingkeyboard-controller][4pplet.com]] |
+
+Requiere modificación del case para USB-C.
+
+** ZMK (nice!nano)
+
+Opción DIY con Zephyr RTOS.
+
+| Característica | Detalle |
+|----------------+----------------------------------------|
+| Compatibilidad | HHKB Pro 2 (con adaptación) |
+| Firmware | ZMK |
+| Bluetooth | Sí (nice!nano tiene BT integrado) |
+| Batería | Sí (nice!nano soporta batería LiPo) |
+| Complejidad | Alta (DIY, soldar, adaptar) |
+
+* Comparativa: BT + QMK/TMK
+
+El santo grial: Bluetooth + Firmware programable
+
+| Opción | BT | QMK/TMK | Dificultad | Estado |
+|---------------------------+----+---------+------------+-------------|
+| Hasu + TMK | ✓ | ✓ | Media | Funciona |
+| Hasu + QMK | ✓ | ✓ | Media | Buggy |
+| Cipulot EC Pro-X | ✗ | ✓ | Media | Funciona |
+| Hybrid stock | ✓ | ✗ | Ninguna | Limitado |
+| nice!nano DIY | ✓ | ZMK | Alta | Experimental |
+
+*Conclusión*: Para BT + programable, Hasu con TMK es la mejor opción probada.
+
+* Matriz de Compatibilidad
+
+| Controller | Pro | Pro 2 | Classic | Hybrid |
+|---------------+-----+-------+---------+--------|
+| Hasu USB | ✓ | ✓ | ✗ | ✗ |
+| Hasu BT | ✓ | ✓ | ✗ | ✗ |
+| Cipulot Pro-X | ✗ | ✓ | ✓ | ✓ |
+| SHKB | ✗ | ✓ | ✗ | ✗ |
+| Stock PFU | - | - | ✓ | ✓ |
+
+* Alternativa: Software (kmonad/keyd)
+
+Si no quieres cambiar hardware, puedes usar remapeo por software:
+
+| Tool | Plataforma | Features |
+|------+--------------+------------------------------|
+| kmonad | Linux/Mac/Win | Layers, tap-hold, todo |
+| keyd | Linux | Layers, tap-hold, más simple |
+
+*Pero*: Rompe la filosofía Hasu/Wada. El teclado depende del sistema operativo.
+
+* Referencias
+
+- [[https://geekhack.org/index.php?topic=12047.0][Hasu's Geekhack Thread - TMK Alt Controller]]
+- [[https://geekhack.org/index.php?topic=71517.0][HHKB Alt Controller Thread]]
+- [[https://hhkb.io/modding/controllers/][hhkb.io - Controllers]]
+- [[https://hhkb.io/modding/PCBs/][hhkb.io - PCBs]]
+- [[https://github.com/tmk/tmk_keyboard][TMK Firmware GitHub]]
+- [[https://github.com/qmk/qmk_firmware][QMK Firmware GitHub]]
+- [[https://github.com/Cipulot/EC-Pro-2][Cipulot EC-Pro-2 GitHub]]
+- [[https://cannonkeys.com/products/cipulot-ec-pcbs-and-daughterboards][CannonKeys - Cipulot]]
+- [[https://4pplet.com/products/steezyhackingkeyboard-controller][4pplet - SHKB]]
