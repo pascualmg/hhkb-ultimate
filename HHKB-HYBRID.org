@@ -1,0 +1,153 @@
+#+TITLE: HHKB Professional Hybrid - Guía de Configuración
+#+AUTHOR: pascualmg
+#+DATE: 2025-01-09
+
+* HHKB Professional Hybrid
+
+Documentación de configuración para el HHKB Professional Hybrid con Bluetooth.
+
+* DIP Switches
+
+Los DIP switches están en la parte trasera del teclado, debajo de la tapa de las pilas.
+
+| Switch | OFF (abajo)              | ON (arriba)                    |
+|--------+--------------------------+--------------------------------|
+| SW1    | Modo Windows/Linux       | Modo Mac                       |
+| SW2    | ◇ = ◇                    | Delete = Backspace (Mac style) |
+| SW3    | Delete key               | Backspace key                  |
+| SW4    | Left ◇ = ◇               | Left ◇ = Backspace             |
+| SW5    | Normal                   | ◇ = Alt, Alt = Meta            |
+| SW6    | Wake up activado         | Wake up desactivado            |
+
+** Configuración para Linux (recomendada)
+
+| Switch | Posición |
+|--------+----------|
+| SW1    | OFF      |
+| SW2    | ON       |
+| SW3    | OFF      |
+| SW4    | OFF      |
+| SW5    | OFF      |
+| SW6    | ON       |
+
+*Notas:*
+- SW2 ON: Hace que la tecla Delete actúe como Backspace directamente (sin Fn)
+- SW6 ON: Desactiva power saving para mantener conexión BT estable
+
+* Perfiles Bluetooth
+
+El HHKB Hybrid tiene 4 perfiles Bluetooth + 1 USB.
+
+** Cambiar de perfil
+
+| Combo            | Acción          |
+|------------------+-----------------|
+| ~Fn + Ctrl + 0~  | Modo USB        |
+| ~Fn + Ctrl + 1~  | Perfil BT 1     |
+| ~Fn + Ctrl + 2~  | Perfil BT 2     |
+| ~Fn + Ctrl + 3~  | Perfil BT 3     |
+| ~Fn + Ctrl + 4~  | Perfil BT 4     |
+
+** Emparejar dispositivo nuevo
+
+1. Seleccionar perfil: ~Fn + Ctrl + [1-4]~
+2. Entrar en modo pairing: *Mantener* ~Fn + Q~ durante 3 segundos
+3. El LED azul parpadeará rápido
+4. En el dispositivo, buscar =HHKB_Hybrid_X= (donde X es el número de perfil)
+5. Conectar
+
+*IMPORTANTE*: Cada perfil aparece como dispositivo independiente:
+- Perfil 1 → =HHKB_Hybrid_1=
+- Perfil 2 → =HHKB_Hybrid_2=
+- etc.
+
+** Estado del LED
+
+| Parpadeo      | Significado                              |
+|---------------+------------------------------------------|
+| Rápido        | Modo pairing (buscando nuevo dispositivo)|
+| Lento         | Buscando reconectar dispositivo guardado |
+| Fijo          | Conectado                                |
+
+** Ejemplo de configuración de perfiles
+
+| Perfil | Dispositivo  |
+|--------+--------------|
+| 0      | USB (cable)  |
+| 1      | Mac          |
+| 2      | Móvil        |
+| 3      | Aurin (PC)   |
+| 4      | Raspberry Pi |
+
+* Combos útiles
+
+| Combo              | Acción                                    |
+|--------------------+-------------------------------------------|
+| ~Fn + Q~ (breve)   | Ver perfil actual (parpadeos = número)    |
+| ~Fn + Q~ (3 seg)   | Modo pairing                              |
+| ~Fn + Ctrl + B~    | Ver nivel de batería                      |
+| ~Fn + Ctrl + 0~    | Cambiar a USB                             |
+| ~Fn + Ctrl + 1-4~  | Cambiar a perfil BT                       |
+
+* Reset del teclado
+
+Si el teclado tiene comportamiento extraño:
+
+1. Apagar el teclado (interruptor trasero)
+2. Mantener pulsado ~Fn + Q + Backspace~
+3. Encender mientras mantienes las teclas
+4. Soltar cuando el LED parpadee
+
+* Layout en Linux/NixOS
+
+Para usar layout US en GNOME Wayland:
+
+#+BEGIN_SRC shell
+gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us')]"
+#+END_SRC
+
+O en NixOS config:
+
+#+BEGIN_SRC nix
+services.xserver.xkb.layout = "us";
+#+END_SRC
+
+* Mantenimiento
+
+** Lubricación de sliders
+- Lubricante recomendado: Tribosys 3203 o Krytox 205g0
+- Aplicar poca cantidad en los sliders
+
+** Cúpulas de repuesto (domes)
+- Deskeys DES-Domes 45g (más cercanas al original)
+- BKE Redux (más táctiles)
+- Disponibles en: deskeys.io, CandyKeys, Amazon
+
+* Diferencias con HHKB Pro 2 + Hasu
+
+| Característica     | Pro 2 + Hasu        | Hybrid                    |
+|--------------------+---------------------+---------------------------|
+| Firmware           | QMK/TMK             | PFU propietario           |
+| Programación       | Total (layers, etc) | Limitada (Keymap Tool)    |
+| Bluetooth          | No (solo USB)       | Sí (4 perfiles)           |
+| Mouse keys         | Sí (via QMK)        | No                        |
+| SpaceFN            | Sí (via QMK)        | No                        |
+| Tap/Hold           | Sí (via QMK)        | No                        |
+
+* Herramientas
+
+** HHKB Keymap Tool
+Herramienta oficial de PFU para remapear teclas (solo por USB).
+- Descarga: https://happyhackingkb.com/download/
+
+** Alternativas de software para features avanzadas
+Si necesitas tap/hold, layers, etc. en Linux:
+- kmonad
+- keyd
+- interception-tools
+
+* Referencias
+
+- Manual oficial: https://happyhackingkb.com/manual/
+- Foro: https://geekhack.org/
+- Deskthority: https://deskthority.net/
