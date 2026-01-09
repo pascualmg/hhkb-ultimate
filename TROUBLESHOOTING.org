@@ -1,0 +1,135 @@
+#+TITLE: HHKB Pro + Hasu BT Controller - Troubleshooting Guide
+#+AUTHOR: pascualmg
+#+DATE: 2025-01-10
+
+* Problema Actual: Bluetooth conecta pero no envía teclas
+
+** Estado del Hardware
+- *Teclado*: HHKB Professional con Hasu BT Controller
+- *USB*: Funciona correctamente (conector reemplazado en SAT)
+- *Bluetooth*: Conecta al dispositivo pero NO envía keystrokes
+- *Batería*: Por verificar
+
+** Síntomas
+1. El módulo BT empareja correctamente con el ordenador
+2. El sistema reconoce el teclado como dispositivo HID
+3. Las teclas NO se registran vía Bluetooth
+4. Por USB todo funciona perfectamente
+
+* Diagnóstico: QMK vs TMK
+
+** El Problema de Fondo
+El firmware actual usa *QMK*, pero el soporte para el módulo RN-42 (Bluetooth) del Hasu controller tiene problemas conocidos:
+
+| Aspecto            | TMK                                    | QMK                                      |
+|--------------------+----------------------------------------+------------------------------------------|
+| Soporte BT         | Nativo, diseñado por Hasu              | Portado de TMK, tiene bugs               |
+| Fiabilidad BT      | Estable                                | Conocido por conectar sin enviar teclas  |
+| Uso de memoria     | Normal                                 | ~96% con RN42 habilitado                 |
+| Recomendación      | *Preferido para Hasu BT*               | Mejor para teclados solo USB             |
+
+** Causa Probable
+El firmware QMK fue compilado *sin el flag de Bluetooth* habilitado, o incluso con el flag, QMK tiene problemas inherentes con RN-42.
+
+En el ~rules.mk~ actual falta:
+#+BEGIN_SRC makefile
+HHKB_RN42_ENABLE = yes
+#+END_SRC
+
+Y al compilar debería ser:
+#+BEGIN_SRC shell
+make hhkb-keymap-clean
+make hhkb-keymap-dfu HHKB_RN42_ENABLE=yes
+#+END_SRC
+
+* Soluciones (en orden de prioridad)
+
+** 1. Intentar Reset del Módulo BT (Rápido, no requiere reflashear)
+
+Conectado por USB, probar estos combos:
+
+| Combo                        | Acción                                |
+|------------------------------+---------------------------------------|
+| ~LShift + RShift + P~        | Borrar pairings del módulo BT         |
+| ~LShift + RShift + I~        | Info del módulo BT                    |
+| ~LShift + RShift + U~        | Cambiar entre USB y BT                |
+
+Después de borrar pairings:
+1. Eliminar el teclado de la configuración BT del ordenador
+2. Volver a emparejar como dispositivo nuevo
+
+** 2. Reflashear QMK con soporte RN-42 (Puede no funcionar)
+
+#+BEGIN_SRC shell
+# Entrar en entorno con QMK
+nix-shell -p qmk
+
+# Limpiar build anterior
+make hhkb-ultimate-clean
+
+# Compilar CON soporte RN-42
+qmk compile -kb hhkb/ansi/32u4 -km ultimate HHKB_RN42_ENABLE=yes
+
+# O alternativamente
+make hhkb/ansi/32u4:ultimate:dfu HHKB_RN42_ENABLE=yes
+#+END_SRC
+
+*Advertencia*: Incluso con el flag, QMK puede seguir teniendo problemas. Si no funciona, ir a opción 3.
+
+** 3. Cambiar a TMK (Solución Recomendada)
+
+TMK es el firmware original de Hasu y tiene soporte BT nativo y estable.
+
+*** Clonar TMK
+#+BEGIN_SRC shell
+cd ~/src
+git clone https://github.com/tmk/tmk_keyboard.git
+cd tmk_keyboard/keyboard/hhkb
+#+END_SRC
+
+*** Compilar para Hasu BT (RN-42)
+#+BEGIN_SRC shell
+# Para HHKB Pro2 con módulo RN-42
+make -f Makefile.rn42 clean
+make -f Makefile.rn42
+#+END_SRC
+
+*** Flashear
+#+BEGIN_SRC shell
+# Poner teclado en modo DFU (botón reset o LShift+RShift+Fn+P)
+make -f Makefile.rn42 dfu
+#+END_SRC
+
+*** Adaptar el keymap
+El keymap de TMK usa formato diferente a QMK. Habrá que portar las capas (Base, Fn, Mouse, VI, SpaceFN) al formato TMK.
+
+Archivo a editar: ~keymap_hasu.c~ o crear uno nuevo.
+
+* Indicadores LED del Módulo BT
+
+| LED   | Significado                    |
+|-------+--------------------------------|
+| Verde | Conexión BT establecida        |
+| Rojo  | Teclas perdidas / Problema     |
+
+* Referencias
+
+- [[https://github.com/tmk/tmk_keyboard/tree/master/keyboard/hhkb][TMK HHKB en GitHub]]
+- [[https://github.com/qmk/qmk_firmware/issues/1096][QMK Issue #1096 - Bluetooth HHKB]]
+- [[https://geekhack.org/index.php?topic=12047.0][Hasu's Geekhack Thread]]
+- [[https://geekhack.org/index.php?topic=71517.0][HHKB Alt Controller Thread]]
+- [[https://hhkb.io/modding/controllers/][hhkb.io - Controllers]]
+
+* Historial de Cambios
+
+| Fecha      | Acción                                    |
+|------------+-------------------------------------------|
+| ????-??-?? | Flash de QMK sin flags BT (problema)      |
+| ????-??-?? | Reemplazo conector USB en SAT             |
+| 2025-01-10 | Documentación del problema                |
+
+* TODO Próximos Pasos
+- [ ] Probar reset del módulo BT (opción 1)
+- [ ] Si no funciona, reflashear QMK con RN42 flag (opción 2)
+- [ ] Si sigue sin funcionar, migrar a TMK (opción 3)
+- [ ] Verificar estado de la batería del módulo BT
